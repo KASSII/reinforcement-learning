@@ -1,15 +1,20 @@
-from collections import defaultdict
-
 class Trainer():
     def __init__(self):
         pass
     
-    def train(self, agent, env, logger, episode_count=10000, gamma=0.9, learning_rate=0.1, render=False):
+    # 学習
+    def train(self, agent, env, logger, episode_count=10000, gamma=0.9, learning_rate=0.1, render=False, disp_freq=100):
         # エージェントの初期化
         actions = list(range(env.action_space.n))
-        agent.actions = actions
-        agent.Q = defaultdict(lambda: [0] * len(actions))
-        agent.train()
+        agent.initialize(actions)
+
+        # ロガーの初期化
+        config_data = {
+            "episode_count": episode_count,
+            "gamma": gamma,
+            "learning_rate": learning_rate
+        }
+        logger.initialize(str(env.spec), config_data)
 
         # 指定した回数分エピソードを実行
         for e in range(episode_count):            
@@ -34,8 +39,13 @@ class Trainer():
                 s = n_state
                 episode_reward += reward
         
-            logger.add({"reward":episode_reward})
+            logger.add({"episode":e, "reward":episode_reward})
+            # 一定間隔ごとにlog表示
+            if e % disp_freq == 0:
+                print("At episode {}, reward={}".format(e, logger.get("reward", disp_freq)))
+
     
+    # 学習結果を使って1エピソード実行
     def play(self, agent, env):
         agent.eval()
         s = env.reset()

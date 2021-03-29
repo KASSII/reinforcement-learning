@@ -1,4 +1,5 @@
 import numpy as np
+from collections import defaultdict
 
 class Agent():
     def __init__(self, epsilon=0.1):
@@ -6,6 +7,12 @@ class Agent():
         self.actions = None
         self.epsilon = epsilon
         self.mode = "train"
+    
+    # エージェントを初期化する
+    def initialize(self, actions):
+        self.actions = actions
+        self.Q = defaultdict(lambda: [0] * len(actions))
+        self.train()
 
     # 状態sに対応する行動を返す
     def policy(self, state):
