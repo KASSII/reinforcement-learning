@@ -22,6 +22,7 @@ def main():
 
     # ログ出力
     logger.plot(key="reward", freq=50, save_path=os.path.join(dst_path, "reward.png"))
+    agent.save(os.path.join(dst_path, "result.pkl"))
 
     # 学習したエージェントで1エピソード実行
     trainer.play(agent, obs)

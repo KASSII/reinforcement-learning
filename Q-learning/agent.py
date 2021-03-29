@@ -1,5 +1,6 @@
 import numpy as np
 from collections import defaultdict
+import dill
 
 class Agent():
     def __init__(self, epsilon=0.1):
@@ -39,3 +40,13 @@ class Agent():
     # 推論モードにする
     def eval(self):
         self.mode = "eval"
+    
+    # 学習結果を保存
+    def save(self, path):
+        with open(path, 'wb') as f:
+            dill.dump(self.Q , f)
+    
+    # 学習結果を読み込み
+    def load(self, path):
+        with open(path, 'rb') as f:
+            self.Q = dill.load(f)
