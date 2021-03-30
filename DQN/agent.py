@@ -11,13 +11,11 @@ class SimpleDQNModel(nn.Module):
         self.fc1 = nn.Linear(n_state, 64)
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(64, n_action)
-        self.relu2 = nn.ReLU()
 
     def forward(self, x):
         x = self.fc1(x)
         x = self.relu1(x)
         x = self.fc2(x)
-        x = self.relu2(x)
         return x
 
 class Agent():
@@ -27,6 +25,7 @@ class Agent():
         self.epsilon = epsilon
         self.mode = "train"
         self.main_net = None
+        self.updated = False
     
     # エージェントを初期化する
     def initialize(self, actions, state_shape):
@@ -43,7 +42,8 @@ class Agent():
             epsilon = 0.0
 
         # εの確率で探索、(1-ε)の確率で活用を行う
-        if np.random.random() < epsilon:
+        # ネットワークの出力が偏るので、未学習の状態の時はランダムに行動する
+        if np.random.random() < epsilon or not self.updated:
             action = torch.LongTensor([[np.random.randint(len(self.actions))]]).long()
         else:
             network_mode = self.main_net.training
@@ -53,6 +53,18 @@ class Agent():
             if network_mode:
                 self.main_net.train()
         return action
+    
+    def update(self, batch):
+        # バッチを分解する
+        state_batch = torch.cat([b.s for b in batch])
+        action_batch = torch.cat([b.a for b in batch])
+        reward_batch = torch.from_numpy(np.array([b.r for b in batch])).float()
+
+        # 現在の状態s、選択された行動aに対する行動価値Q(s, a)を求める
+        self.main_net.train()
+        Q_s_a = self.main_net(state_batch).gather(1, action_batch)
+        import pdb;pdb.set_trace()
+        self.updated = True
 
     # 学習モードにする
     def train(self):
