@@ -131,7 +131,6 @@ class Brain:
         # 2. ミニバッチの作成
         # -----------------------------------------
         # 2.1 メモリからミニバッチ分のデータを取り出す
-        import pdb;pdb.set_trace()
         transitions = self.memory.sample(BATCH_SIZE)
 
         # 2.2 各変数をミニバッチに対応する形に変形

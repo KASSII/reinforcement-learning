@@ -2,6 +2,7 @@ import os
 import gym
 import datetime
 from agent import Agent
+from observer import CartPoleObserver
 from logger import Logger
 from trainer import Trainer
 
@@ -11,7 +12,7 @@ def main():
     dst_path = os.path.join("log/", now.strftime('%Y%m%d_%H%M%S'))
 
     # 環境、エージェント、ロガー、トレーナーの初期化
-    obs = gym.make("CartPole-v0")
+    obs = CartPoleObserver(gym.make("CartPole-v0"))
     agent = Agent()
     logger = Logger(os.path.join(dst_path, "log.txt"))
     trainer = Trainer()
