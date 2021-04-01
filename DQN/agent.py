@@ -6,6 +6,32 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+class DQNModel(nn.Module):
+    def __init__(self, ch, n_action):
+        super(DQNModel, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=ch, out_channels=32, kernel_size=8, stride=4)
+        self.relu1 = nn.ReLU()
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2)
+        self.relu2 = nn.ReLU()
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)
+        self.relu3 = nn.ReLU()
+        self.fc1 = nn.Linear(3136, 512)
+        self.relu4 = nn.ReLU()
+        self.fc2 = nn.Linear(512, n_action)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.relu1(x)
+        x = self.conv2(x)
+        x = self.relu2(x)
+        x = self.conv3(x)
+        x = self.relu3(x)
+        x = nn.Flatten()
+        x = self.fc1(x)
+        x = self.relu4(x)
+        x = self.fc2(x)
+        return x
+
 class SimpleDQNModel(nn.Module):
     def __init__(self, n_state, n_action):
         super(SimpleDQNModel, self).__init__()
@@ -36,7 +62,7 @@ class Agent():
     # エージェントを初期化する
     def initialize(self, actions, state_shape):
         self.actions = actions
-        self.main_net = SimpleDQNModel(state_shape[0], len(actions))
+        self.main_net = DQNModel(state_shape[0], len(actions))
         self.main_net.to(self.device)
         self.train()
 
@@ -120,3 +146,21 @@ class Agent():
     # 学習結果を読み込み
     def load(self, path):
         self.main_net.load_state_dict(torch.load(path))
+    
+class SimpleAgent(Agent):
+    def __init__(self, epsilon=0.1):
+        super().__init__(epsilon)
+    
+    def initialize(self, actions, state_shape):
+        self.actions = actions
+        self.main_net = SimpleDQNModel(state_shape[0], len(actions))
+        self.main_net.to(self.device)
+        self.train()
+
+        self.target_net = copy.deepcopy(self.main_net)
+        for p in self.target_net.parameters():
+            p.requires_grad = False
+        self.target_net.eval()
+
+        torch.backends.cudnn.benchmark = True
+        self.optimizer = optim.Adam(self.main_net.parameters(), lr=0.0001)
