@@ -5,7 +5,7 @@ import gym_ple
 from gym.wrappers import FrameStack
 import datetime
 from agent import Agent, SimpleAgent
-from observer import CartPoleObserver, SkipFrame, GrayScaleObservation, ResizeObservation
+from observer import CartPoleObserver, ImageObserver, SkipFrame, GrayScaleObservation, ResizeObservation
 from logger import Logger
 from trainer import Trainer
 
@@ -18,11 +18,8 @@ def main():
     #obs = CartPoleObserver(gym.make("CartPole-v0"))
     #agent = SimpleAgent()
 
-    obs = gym.make("Catcher-v0")
-    obs = SkipFrame(obs, skip=4)
-    obs = GrayScaleObservation(obs)
-    #obs = ResizeObservation(obs, shape=84)
-    #obs = FrameStack(obs, num_stack=4)
+    env = gym.make("Catcher-v0")
+    obs = ImageObserver(env, 4, (84, 84), 4)
     agent = Agent()
 
     logger = Logger(os.path.join(dst_path, "log.txt"))

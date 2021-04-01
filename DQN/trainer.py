@@ -29,7 +29,6 @@ class Trainer():
 
         # 指定した回数分エピソードを実行
         for e in range(episode_count):
-            import pdb;pdb.set_trace()
             s = env.reset()
             s = torch.from_numpy(s).float().unsqueeze(0)
             episode_reward = 0.0
