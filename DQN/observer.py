@@ -1,10 +1,10 @@
-class CartPoleObserver():
+import gym
+
+class CartPoleObserver(gym.ObservationWrapper):
     def __init__(self, env):
+        super().__init__(env)
         self.step_count = 0
         self.env = env
-        self.action_space = env.action_space
-        self.observation_space = env.observation_space
-        self.spec = env.spec
     
     def reset(self):
         self.step_count = 0
@@ -26,4 +26,3 @@ class CartPoleObserver():
             reward = 0.0
         
         return n_state, reward, done, info
-    

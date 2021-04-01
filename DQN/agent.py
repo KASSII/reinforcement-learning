@@ -1,7 +1,6 @@
 import numpy as np
 from collections import defaultdict
 import copy
-import dill
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -26,21 +25,26 @@ class SimpleDQNModel(nn.Module):
 
 class Agent():
     def __init__(self, epsilon=0.1):
-        self.Q = None
         self.actions = None
         self.epsilon = epsilon
         self.mode = "train"
         self.main_net = None
         self.target_net = None
         self.updated = False
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
     # エージェントを初期化する
     def initialize(self, actions, state_shape):
         self.actions = actions
         self.main_net = SimpleDQNModel(state_shape[0], len(actions))
-        self.target_net = SimpleDQNModel(state_shape[0], len(actions))
-        self.target_net.eval()
+        self.main_net.to(self.device)
         self.train()
+
+        self.target_net = copy.deepcopy(self.main_net)
+        for p in self.target_net.parameters():
+            p.requires_grad = False
+        self.target_net.eval()
+
         torch.backends.cudnn.benchmark = True
         self.optimizer = optim.Adam(self.main_net.parameters(), lr=0.0001)
 
@@ -59,24 +63,25 @@ class Agent():
         else:
             self.main_net.eval()  # ネットワークを推論モードに切り替える
             with torch.no_grad():
-                action = self.main_net(state).max(1)[1].view(1, 1)
+                action = self.main_net(state.to(self.device)).max(1)[1].view(1, 1)
+                action = action.to("cpu")
         return action
     
     def update(self, batch, gamma):
         # バッチを分解する
         batch_size = len(batch)
-        state_batch = torch.cat([b.s for b in batch])
-        action_batch = torch.cat([b.a for b in batch])
-        next_state_batch = torch.cat([b.n_s for b in batch])
-        reward_batch = torch.from_numpy(np.array([b.r for b in batch])).float()
+        state_batch = torch.cat([b.s for b in batch]).to(self.device)
+        action_batch = torch.cat([b.a for b in batch]).to(self.device)
+        next_state_batch = torch.cat([b.n_s for b in batch]).to(self.device)
+        reward_batch = torch.from_numpy(np.array([b.r for b in batch])).float().to(self.device)
 
         # 現在の状態s、選択された行動aに対する行動価値Q(s, a)を求める
         self.main_net.eval()
         Q = self.main_net(state_batch).gather(1, action_batch)
 
         # 次の状態s'における最大行動価値max_a'{Q(s', a')}を求める
-        next_Q = torch.zeros(batch_size)
-        final_state_mask = torch.from_numpy(np.array([not b.d for b in batch]).astype(np.uint8))    # 次の状態が存在するインデックスのみ1となるようなマスクを生成
+        next_Q = torch.zeros(batch_size).to(self.device)
+        final_state_mask = torch.from_numpy(np.array([not b.d for b in batch]).astype(np.bool))    # 次の状態が存在するインデックスのみ1となるようなマスクを生成
         next_Q[final_state_mask] = self.target_net(next_state_batch[final_state_mask]).max(1)[0].detach()
 
         # r+γQ(s', a')を計算
@@ -89,16 +94,13 @@ class Agent():
         # パラメータ更新
         self.optimizer.zero_grad()
         loss.backward()
-        #nn.utils.clip_grad_value_(self.main_net.parameters(), clip_value=1.0)
         self.optimizer.step()
 
         # 学習済みフラグを設定
         self.updated = True
 
     def update_target_model(self):
-        #for name, param in self.main_net.named_parameters():
-        #    self.target_net.state_dict()[name] = self.main_net.state_dict()[name].clone()
-        self.target_net = copy.deepcopy(self.main_net)
+        self.target_net.load_state_dict(self.main_net.state_dict())
 
     # 学習モードにする
     def train(self):
@@ -112,10 +114,9 @@ class Agent():
     
     # 学習結果を保存
     def save(self, path):
-        with open(path, 'wb') as f:
-            dill.dump(self.Q , f)
+        torch.save(self.main_net.state_dict(), path)
+
     
     # 学習結果を読み込み
     def load(self, path):
-        with open(path, 'rb') as f:
-            self.Q = dill.load(f)
+        self.main_net.load_state_dict(torch.load(path))

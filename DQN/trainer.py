@@ -12,7 +12,7 @@ class Trainer():
         pass
     
     # 学習
-    def train(self, agent, env, logger, episode_count=5000, buffer_size=50000, batch_size=32, learning_start_buffer_size=4096, gamma=0.9, learning_rate=0.1, render=False, disp_freq=10):
+    def train(self, agent, env, logger, episode_count=500, buffer_size=50000, batch_size=32, learning_start_buffer_size=4096, gamma=0.9, render=False, disp_freq=10):
         # エージェントの初期化
         actions = list(range(env.action_space.n))
         state_shape = env.observation_space.shape
@@ -22,7 +22,6 @@ class Trainer():
         config_data = {
             "episode_count": episode_count,
             "gamma": gamma,
-            "learning_rate": learning_rate
         }
         logger.initialize(str(env.spec), config_data)
 
