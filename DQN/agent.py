@@ -142,11 +142,11 @@ class Agent():
     # 学習結果を保存
     def save(self, path):
         torch.save(self.main_net.state_dict(), path)
-
     
     # 学習結果を読み込み
     def load(self, path):
         self.main_net.load_state_dict(torch.load(path))
+        self.updated = True
     
 class SimpleAgent(Agent):
     def __init__(self, epsilon=0.1):

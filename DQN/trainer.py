@@ -66,6 +66,7 @@ class Trainer():
         agent.eval()
         s = env.reset()
         s = torch.from_numpy(s).float().unsqueeze(0)
+        episode_reward = 0.0
         done = False
         while not done:
             env.render()
@@ -73,5 +74,6 @@ class Trainer():
             n_state, reward, done, info = env.step(a[0][0].item())
             n_state = torch.from_numpy(n_state).float().unsqueeze(0)
             s = n_state
+            episode_reward += reward
         env.render()
-        print(reward)
+        print(episode_reward)
