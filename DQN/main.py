@@ -21,11 +21,12 @@ def main():
     if args.env == "CartPole":
         env = gym.make("Catcher-v0")
         obs = CartPoleObserver(gym.make("CartPole-v0"))
+        agent = SimpleAgent()
     elif args.env == "Catcher":
         env = gym.make("Catcher-v0")
         obs = ImageObserver(env, 4, (84, 84), 4)
+        agent = Agent()
     
-    agent = Agent()
     trainer = Trainer()
 
     if args.play:
