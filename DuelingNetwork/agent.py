@@ -6,9 +6,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-class DQNModel(nn.Module):
+class DuelingNetModel(nn.Module):
     def __init__(self, ch, n_action):
-        super(DQNModel, self).__init__()
+        super(DuelingNetModel, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=ch, out_channels=32, kernel_size=8, stride=4)
         self.relu1 = nn.ReLU()
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2)
@@ -44,9 +44,9 @@ class DQNModel(nn.Module):
         output = val + adv - adv.mean(1, keepdim=True).expand(-1, adv.size(1))
         return output
 
-class SimpleDQNModel(nn.Module):
+class SimpleDuelingNetModel(nn.Module):
     def __init__(self, n_state, n_action):
-        super(SimpleDQNModel, self).__init__()
+        super(SimpleDuelingNetModel, self).__init__()
         self.fc1 = nn.Linear(n_state, 32)
         self.relu1 = nn.ReLU()
 
@@ -85,7 +85,7 @@ class Agent():
     # エージェントを初期化する
     def initialize(self, actions, state_shape):
         self.actions = actions
-        self.main_net = DQNModel(state_shape[0], len(actions))
+        self.main_net = DuelingNetModel(state_shape[0], len(actions))
         self.main_net.to(self.device)
         self.train()
 
@@ -176,7 +176,7 @@ class SimpleAgent(Agent):
     
     def initialize(self, actions, state_shape):
         self.actions = actions
-        self.main_net = SimpleDQNModel(state_shape[0], len(actions))
+        self.main_net = SimpleDuelingNetModel(state_shape[0], len(actions))
         self.main_net.to(self.device)
         self.train()
 
