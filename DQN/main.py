@@ -10,9 +10,11 @@ from observer import CartPoleObserver, ImageObserver
 from logger import Logger
 from trainer import Trainer
 
+from DDQN.agent import DDQNAgent
+
 def main():
     parser = argparse.ArgumentParser(description='Deep Q-Network')
-    parser.add_argument('--algorithm', '-a', choices=('DQN'), default='DQN', help='Algorithm to be used')
+    parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN'), default='DQN', help='Algorithm to be used')
     parser.add_argument('--env', '-e', choices=('CartPole', 'Catcher'), default='CartPole', help='Environment Name')
     parser.add_argument('--play', action='store_true', help='Play Mode')
     parser.add_argument('--model_path', '-p', help='Trained Model Path (Valid only in play mode)')
@@ -51,6 +53,9 @@ def main():
     # エージェント、トレーナーの初期化
     if args.algorithm == "DQN":
         agent = Agent(model_type, epsilon, epsilon_decay, epsilon_min)
+        trainer = Trainer(agent, obs, logger)
+    elif args.algorithm == "DDQN":
+        agent = DDQNAgent(model_type, epsilon, epsilon_decay, epsilon_min)
         trainer = Trainer(agent, obs, logger)
 
     if args.play:
