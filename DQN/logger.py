@@ -7,11 +7,11 @@ from matplotlib import pyplot as plt
 class Logger():
     def __init__(self, output_log_file="Log.txt"):
         self.output_log_file = output_log_file
-        os.makedirs(os.path.dirname(output_log_file), exist_ok=True)
         self.log = {}
     
     # 初期化
     def initialize(self, title="", config={}):
+        os.makedirs(os.path.dirname(self.output_log_file), exist_ok=True)
         with open(self.output_log_file, "w") as f:
             f.write("{}\n".format(title))
             f.write("config: {}\n".format(config))
