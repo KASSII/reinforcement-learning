@@ -5,7 +5,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 class Logger():
-    def __init__(self, output_log_file="Log.txt"):
+    def __init__(self, alg_name, output_log_file="Log.txt"):
+        self.alg_name = alg_name
         self.output_log_file = output_log_file
         self.log = {}
     
@@ -14,6 +15,7 @@ class Logger():
         os.makedirs(os.path.dirname(self.output_log_file), exist_ok=True)
         with open(self.output_log_file, "w") as f:
             f.write("{}\n".format(title))
+            f.write("Algorithm: {}\n".format(self.alg_name))
             f.write("config: {}\n".format(config))
             f.write("\n")
         self.log = {}

@@ -46,7 +46,7 @@ def main():
     # ログ出力先の設定
     now = datetime.datetime.now()
     dst_path = os.path.join("log/", now.strftime('%Y%m%d_%H%M%S'))
-    logger = Logger(os.path.join(dst_path, "log.txt"))
+    logger = Logger(args.algorithm, os.path.join(dst_path, "log.txt"))
     
     # エージェント、トレーナーの初期化
     if args.algorithm == "DQN":
