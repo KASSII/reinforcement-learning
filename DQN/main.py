@@ -13,10 +13,11 @@ from trainer import Trainer
 from DDQN.agent import DDQNAgent
 from DQN_with_multi_step.trainer import WithMultiStepTrainer
 from DQN_with_noisy_net.agent import WithNoisyNetAgent
+from DQN_with_prioritized_experience_replay.trainer import WithPrioritizedExperienceTrainer
 
 def main():
     parser = argparse.ArgumentParser(description='Deep Q-Network')
-    parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN', 'DQN_with_multi_step', 'DQN_with_noisy_net'), default='DQN', help='Algorithm to be used')
+    parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN', 'DQN_with_multi_step', 'DQN_with_noisy_net', 'DQN_with_prioritized_experience_replay'), default='DQN', help='Algorithm to be used')
     parser.add_argument('--env', '-e', choices=('CartPole', 'Catcher'), default='CartPole', help='Environment Name')
     parser.add_argument('--play', action='store_true', help='Play Mode')
     parser.add_argument('--model_path', '-p', help='Trained Model Path (Valid only in play mode)')
@@ -66,6 +67,10 @@ def main():
     elif args.algorithm == "DQN_with_noisy_net":
         agent = WithNoisyNetAgent(model_type, epsilon, epsilon_decay, epsilon_min)
         trainer = Trainer(agent, obs, logger)
+    elif args.algorithm == "DQN_with_prioritized_experience_replay":
+        prioritized_experience_replay_valid_ep_num = 30
+        agent = Agent(model_type, epsilon, epsilon_decay, epsilon_min)
+        trainer = WithPrioritizedExperienceTrainer(agent, obs, logger, prioritized_experience_replay_valid_ep_num)
 
     if args.play:
         # 学習済みモデルの読み込み
