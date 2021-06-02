@@ -164,6 +164,7 @@ class Agent():
     # 学習結果を保存
     def save(self, path):
         torch.save(self.main_net.to('cpu').state_dict(), path)
+        self.main_net.to(self.device)
     
     # 学習結果を読み込み
     def load(self, path):
