@@ -11,10 +11,11 @@ from logger import Logger
 from trainer import Trainer
 
 from DDQN.agent import DDQNAgent
+from DQN_with_multi_step.trainer import WithMultiStepTrainer
 
 def main():
     parser = argparse.ArgumentParser(description='Deep Q-Network')
-    parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN'), default='DQN', help='Algorithm to be used')
+    parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN', 'DQN_with_multi_step'), default='DQN', help='Algorithm to be used')
     parser.add_argument('--env', '-e', choices=('CartPole', 'Catcher'), default='CartPole', help='Environment Name')
     parser.add_argument('--play', action='store_true', help='Play Mode')
     parser.add_argument('--model_path', '-p', help='Trained Model Path (Valid only in play mode)')
@@ -57,6 +58,10 @@ def main():
     elif args.algorithm == "DDQN":
         agent = DDQNAgent(model_type, epsilon, epsilon_decay, epsilon_min)
         trainer = Trainer(agent, obs, logger)
+    elif args.algorithm == "DQN_with_multi_step":
+        multi_step_num = 3
+        agent = Agent(model_type, epsilon, epsilon_decay, epsilon_min)
+        trainer = WithMultiStepTrainer(agent, obs, logger, multi_step_num)
 
     if args.play:
         # 学習済みモデルの読み込み
