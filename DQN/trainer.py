@@ -81,6 +81,7 @@ class Trainer():
             episode_reward += reward
         self.env.render()
         print(episode_reward)
+        self.env.close()
     
     # 学習モデルを読み込む
     def load_model(self, model_path):
