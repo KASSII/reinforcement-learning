@@ -50,10 +50,18 @@ class SimpleDQNModel(nn.Module):
         x = self.fc3(x)
         return x
 
+model_dict = {
+    "Simple": SimpleDQNModel,
+    "Default": DQNModel
+}
+
 class Agent():
-    def __init__(self, epsilon=0.1):
+    def __init__(self, model_type="Default", epsilon=0.1, epsilon_decay=1.0, epsilon_min=0.1):
+        self.model_type = model_type
         self.actions = None
         self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay
+        self.epsilon_min = epsilon_min
         self.mode = "train"
         self.main_net = None
         self.target_net = None
@@ -63,7 +71,7 @@ class Agent():
     # エージェントを初期化する
     def initialize(self, actions, state_shape):
         self.actions = actions
-        self.main_net = DQNModel(state_shape[0], len(actions))
+        self.main_net = model_dict[self.model_type](state_shape[0], len(actions))
         self.main_net.to(self.device)
         self.train()
 
@@ -79,6 +87,9 @@ class Agent():
     def policy(self, state):
         # 推論モードの時は探索を行わないようにする
         if self.mode == "train":
+            # εを減衰させる
+            self.epsilon *= self.epsilon_decay
+            self.epsilon = max(self.epsilon, self.epsilon_min)
             epsilon = self.epsilon
         else:
             epsilon = 0.0
@@ -94,7 +105,7 @@ class Agent():
                 action = action.to("cpu")
         return action
     
-    def update(self, batch, gamma):
+    def calc_td_error(self, batch, gamma, reduction='mean'):
         # バッチを分解する
         batch_size = len(batch)
         state_batch = torch.cat([b.s for b in batch]).to(self.device)
@@ -108,15 +119,26 @@ class Agent():
 
         # 次の状態s'における最大行動価値max_a'{Q(s', a')}を求める
         next_Q = torch.zeros(batch_size).to(self.device)
-        final_state_mask = torch.from_numpy(np.array([not b.d for b in batch]).astype(np.bool))    # 次の状態が存在するインデックスのみ1となるようなマスクを生成
-        next_Q[final_state_mask] = self.target_net(next_state_batch[final_state_mask]).max(1)[0].detach()
+        final_state_mask = torch.from_numpy(np.array([not b.d for b in batch]).astype(np.bool))    # 次の状態が存在するインデックスのみTrueとなるようなマスクを生成
+        if final_state_mask.any():      # 全ての要素がFalseだエラーになるので条件分岐
+            next_Q[final_state_mask] = self.target_net(next_state_batch[final_state_mask]).max(1)[0].detach()
 
         # r+γQ(s', a')を計算
         expected = reward_batch + gamma * next_Q
 
         # TD誤差（損失関数）を計算
         self.main_net.train()
-        loss = F.smooth_l1_loss(Q, expected.unsqueeze(1))
+        # reductionモードがnoneの時は、差分をそのまま返す
+        if reduction == 'none':
+            loss = expected.unsqueeze(1) - Q
+        # none以外の時は、Huber損失まで計算する
+        else:
+            loss = F.smooth_l1_loss(Q, expected.unsqueeze(1), reduction=reduction)
+        return loss
+    
+    def update(self, batch, gamma):
+        # TD誤差（損失関数）を計算
+        loss = self.calc_td_error(batch, gamma)
 
         # パラメータ更新
         self.optimizer.zero_grad()
@@ -141,27 +163,10 @@ class Agent():
     
     # 学習結果を保存
     def save(self, path):
-        torch.save(self.main_net.state_dict(), path)
+        torch.save(self.main_net.to('cpu').state_dict(), path)
+        self.main_net.to(self.device)
     
     # 学習結果を読み込み
     def load(self, path):
         self.main_net.load_state_dict(torch.load(path))
         self.updated = True
-    
-class SimpleAgent(Agent):
-    def __init__(self, epsilon=0.1):
-        super().__init__(epsilon)
-    
-    def initialize(self, actions, state_shape):
-        self.actions = actions
-        self.main_net = SimpleDQNModel(state_shape[0], len(actions))
-        self.main_net.to(self.device)
-        self.train()
-
-        self.target_net = copy.deepcopy(self.main_net)
-        for p in self.target_net.parameters():
-            p.requires_grad = False
-        self.target_net.eval()
-
-        torch.backends.cudnn.benchmark = True
-        self.optimizer = optim.Adam(self.main_net.parameters(), lr=0.0001)
