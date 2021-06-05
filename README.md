@@ -1,17 +1,18 @@
 pytorchによる強化学習スクリプトと概要をまとめたリポジトリ
 
-実装済みのアルゴリズムは下記の通り
+実装済みのアルゴリズムは下記の通り   
+
 * モンテカルロ法  
 * TD法  
-  * Sarsa  
-  * Q-Learning    
+    * Sarsa  
+    * Q-Learning    
 * 深層強化学習（DQN派生）  
-  * DQN  
-  * DDQN  
-  * DQN_with_prioritized_experience_replay  
-  * DuelingNetwork  
-  * DQN_with_multi_step  
-  * DQN_with_noisy_net  
+    * DQN  
+    * DDQN  
+    * DQN_with_prioritized_experience_replay  
+    * DuelingNetwork  
+    * DQN_with_multi_step  
+    * DQN_with_noisy_net  
 
 環境構築は下記のコマンドを実行  
 `> pip install -r requirements.txt`
@@ -30,6 +31,7 @@ AIは現在の状態を参考に何らかの行動をして、その結果とし
 
 ## 強化学習の定式化
 強化学習の環境はマルコフ決定過程（MDP）と仮定され、下記の要素で構成される。  
+
  * 状態s  
  * 行動a  
  * 遷移関数T：状態sと行動aを受け取り、遷移可能な状態s'とs'へ遷移する確率を返す関数  
@@ -39,6 +41,7 @@ AIは現在の状態を参考に何らかの行動をして、その結果とし
 
 
 学習の流れは下記の通り  
+
 1. エージェントが現在の状態s_tを観測  
 2. 方策πに従って行動a_tを決定  
 3. 環境の状態が遷移関数Tに従ってs_tからs_t+1へ遷移  
@@ -115,6 +118,7 @@ alt="V^\pi(s_t) = \sum_a \pi(s_t, a_t)\sum_{s_{t+1}}P_{s_{t}s_{t+1}}^{a_{t}}(R(s
 
 ## 価値ベースと方策ベース
 強化学習の行動の選び方は大きく2つの方針がある。  
+
 1. 価値ベース  
 状態価値を計算し、値が最も高い状態に遷移するように行動する。（要は必ず価値が高い方へ行動する）  
 学習では価値関数のみが更新される。  
