@@ -1,0 +1,27 @@
+certifi==2020.12.5
+cloudpickle==1.6.0
+cycler==0.10.0
+dataclasses==0.8
+dill==0.3.3
+future==0.18.2
+gym==0.18.3
+-e git+https://github.com/lusob/gym-ple.git@7cedbf4e31be86f5ca2aae5c0dfd9d38825af64e#egg=gym_ple
+gym-super-mario-bros==7.3.0
+kiwisolver==1.3.1
+matplotlib==3.3.4
+nes-py==8.1.6
+numpy==1.19.5
+Pillow==8.2.0
+-e git+https://github.com/ntasfi/PyGame-Learning-Environment.git@3dbe79dc0c35559bb441b9359948aabf9bb3d331#egg=ple
+pygame==2.0.1
+pyglet==1.5.0
+pyparsing==2.4.7
+python-dateutil==2.8.1
+scipy==1.5.4
+six==1.16.0
+torch==1.8.1+cpu
+torchaudio==0.8.1
+torchvision==0.9.1+cpu
+tqdm==4.61.0
+typing-extensions==3.10.0.0
+wincertstore==0.2
