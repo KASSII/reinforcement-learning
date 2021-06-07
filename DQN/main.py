@@ -5,6 +5,9 @@ import gym
 import gym_ple
 from gym.wrappers import FrameStack
 import datetime
+from nes_py.wrappers import JoypadSpace
+import gym_super_mario_bros
+
 from agent import Agent
 from observer import CartPoleObserver, ImageObserver
 from logger import Logger
@@ -19,7 +22,7 @@ from DuelingNetwork.agent import DuelingNetworkAgent
 def main():
     parser = argparse.ArgumentParser(description='Deep Q-Network')
     parser.add_argument('--algorithm', '-a', choices=('DQN', 'DDQN', 'DQN_with_multi_step', 'DQN_with_noisy_net', 'DQN_with_prioritized_experience_replay', 'DuelingNetwork'), default='DQN', help='Algorithm to be used')
-    parser.add_argument('--env', '-e', choices=('CartPole', 'Catcher'), default='CartPole', help='Environment Name')
+    parser.add_argument('--env', '-e', choices=('CartPole', 'Catcher', 'Mario'), default='CartPole', help='Environment Name')
     parser.add_argument('--play', action='store_true', help='Play Mode')
     parser.add_argument('--model_path', '-p', help='Trained Model Path (Valid only in play mode)')
     args = parser.parse_args()
@@ -48,6 +51,19 @@ def main():
         epsilon_decay = 1.0
         epsilon_min = 0.1
         episode_count = 200
+    
+    elif args.env == "Mario":
+        # 環境の設定
+        env = gym_super_mario_bros.make("SuperMarioBros-1-1-v0")
+        env = JoypadSpace(env, [["right"], ["right", "A"]])
+        obs = ImageObserver(env, 4, (84, 84), 4)
+
+        # パラメータの設定
+        model_type = "Default"
+        epsilon = 1.0
+        epsilon_decay = 0.99999975
+        epsilon_min = 0.1
+        episode_count = 40000
     
     # ログ出力先の設定
     now = datetime.datetime.now()
