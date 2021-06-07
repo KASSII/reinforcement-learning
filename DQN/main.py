@@ -30,7 +30,6 @@ def main():
     # 環境の初期化
     if args.env == "CartPole":
         # 環境の設定
-        env = gym.make("Catcher-v0")
         obs = CartPoleObserver(gym.make("CartPole-v0"))
 
         # パラメータの設定
