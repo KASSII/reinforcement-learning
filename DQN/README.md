@@ -57,7 +57,7 @@
 <u>DQN</u>  
 * 状態を入力、各行動に対応する行動価値を出力するネットワークでQ関数を表現  
 <p align="center">
-<img src="../docs/DQN/DQN_network.jpg">
+<img src="../docs/DQN/DQN_network.jpg" width=600>
 </p>
 
 ## DQNの損失関数  
@@ -68,7 +68,7 @@ alt="r+\gamma Q(s', a') - Q(s,a)
 ">  
 
 <p align="center">
-<img src="../docs/DQN/DQN_loss.jpg">
+<img src="../docs/DQN/DQN_loss.jpg" width=600>
 </p>  
 
 ## DQNの工夫  
@@ -78,7 +78,7 @@ alt="r+\gamma Q(s', a') - Q(s,a)
     * エージェントの行動履歴をメモリにプールしてからランダムサンプリングして学習する  
     * 各ステップごとに学習すると、時間的に相関が高いデータを連続して学習することになるので、パラメータの更新が安定しない  
 <p align="center">
-<img src="../docs/DQN/ExperienceReplay.jpg">
+<img src="../docs/DQN/ExperienceReplay.jpg" width=600>
 </p>  
 
 2. Fixed Target Q-Ntetwork  
@@ -86,7 +86,7 @@ alt="r+\gamma Q(s', a') - Q(s,a)
     * 現在の価値を計算するネットワークを**メインネットワーク**、遷移先の価値を計算するネットワークを**ターゲットネットワーク**という  
     * 学習時はメインネットワークのみ更新し、一定時刻ごとにメインネットワークをコピーしてターゲットネットワークに上書きする  
 <p align="center">
-<img src="../docs/DQN/FixedTargetQ-Network.jpg">
+<img src="../docs/DQN/FixedTargetQ-Network.jpg" width=800>
 </p>  
 
 
