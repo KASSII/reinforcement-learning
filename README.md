@@ -24,10 +24,8 @@ pytorchによる強化学習スクリプトと概要をまとめたリポジト�
 AIは現在の状態を参考に何らかの行動をして、その結果として報酬が与えられる。そして「実行した行動」と「報酬」を結びつけて「行動の価値」を評価・改善し、最適な行動を学習していく。  
 
 強化学習では、行動を選択して学習する主体（AI）を**エージェント**、状態や報酬を与えるもののことを**環境**と呼ぶ。  
-
-<p align="center">
 <img src="docs/outline.jpg">
-</p>
+
 
 ## 強化学習の定式化
 強化学習の環境はマルコフ決定過程（MDP）と仮定され、下記の要素で構成される。  
@@ -49,11 +47,9 @@ AIは現在の状態を参考に何らかの行動をして、その結果とし
 
 方策πは状態sが与えられた時に行動を返す確率分布。
 また、一連の行動が完了した時に得られる報酬の総和Gは下記のように表される。  
-<p align="center">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+G+%3D+r_0+%2B+r_1+%2B+%5Cdots+%2B+r_T" 
 alt="G = r_0 + r_1 + \dots + r_T">
-</p>
 
 強化学習の目的（価値の高い行動を学習する）は、「**Gを最大化できるような方策πを学習する**」と言い換えることができる。
 
@@ -64,45 +60,44 @@ alt="G = r_0 + r_1 + \dots + r_T">
 **状態価値関数** <img src="https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+V%5E%5Cpi%28s_t%29%0A" alt="V^\pi(s_t)"> ：状態s_tの価値を返す関数  
 「状態s_tの価値」とは、状態s_tを起点に方策πに従って行動を撮り続けて行った時に得られる報酬の合計。  
 ただし、未来の報酬は不確かなので係数γ（割引率）をかける。  
-<p align="center">
+<p align="left">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5CLarge+%5Cdisplaystyle+V%5E%5Cpi%28s%29+%3D+r_%7Bt%2B1%7D%2B%5Cgamma+r_%7Bt%2B2%7D+%2B+%5Cgamma%5E2+r_%7Bt%2B3%7D+%2B+%5Cdots" 
 alt="V^\pi(s) = r_{t+1}+\gamma r_{t+2} + \gamma^2 r_{t+3} + \dots">
 </p>
-<p align="center">
+
+<p align="left">
 <img src="docs/value_function1.jpg">
 </p>
 
 状態価値関数は再帰的に下記のように表現することができる。  
-<p align="center">
+<p align="left">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5CLarge+%5Cdisplaystyle+V%5E%5Cpi%28s%29+%3D+r_%7Bt%2B1%7D%2B%5Cgamma+V%5E%5Cpi%28s_%7Bt%2B1%7D%29" 
 alt="V^\pi(s) = r_{t+1}+\gamma V^\pi(s_{t+1})">
 </p>
-</p>
-<p align="center">
+
+<p align="left">
 <img src="docs/value_function2.jpg">
 </p>
 基本的な考えは上記の通りだが、実はまだ不十分。いくつかの条件分岐を考慮する必要がある。  
 
 ### 方策による条件分岐  
 状態s_tのときに選択される行動a_tは方策πによって確率的に決まる。  
-<p align="center">
+<p align="left">
 <img src="docs/value_function3.jpg">
 </p>
 
 ### 遷移確率による条件分岐
-状態s_tのときに行動a_tを選択したときの次の状態s_t+1は遷移確率Tによって確率的に決まる。
-<p align="center">
+状態s_tのときに行動a_tを選択したときの次の状態s_t+1は遷移確率Tによって確率的に決まる。  
+<p align="left">
 <img src="docs/value_function4.jpg">
 </p>
 
-最終的に状態価値関数は下記の式で表される。
-<p align="center">
+最終的に状態価値関数は下記の式で表される。  
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5CLarge+%5Cdisplaystyle+V%5E%5Cpi%28s_t%29+%3D+%5Csum_a+%5Cpi%28s_t%2C+a_t%29%5Csum_%7Bs_%7Bt%2B1%7D%7DP_%7Bs_%7Bt%7Ds_%7Bt%2B1%7D%7D%5E%7Ba_%7Bt%7D%7D%28R%28s_t%2C+s_%7Bt%2B1%7D%29%2B%5Cgamma+V%28s_%7Bt%2B1%7D%29%29" 
 alt="V^\pi(s_t) = \sum_a \pi(s_t, a_t)\sum_{s_{t+1}}P_{s_{t}s_{t+1}}^{a_{t}}(R(s_t, s_{t+1})+\gamma V(s_{t+1}))">
-</p>  
 
 * 確率的な分岐は期待値で計算する  
 * 式にπが含まれることから分かる通り、状態価値は方策πに依存する  
@@ -110,6 +105,7 @@ alt="V^\pi(s_t) = \sum_a \pi(s_t, a_t)\sum_{s_{t+1}}P_{s_{t}s_{t+1}}^{a_{t}}(R(s
 
 ## モデルベースとモデルフリー
 強化学習の問題設定は大きく2つに分けられる。  
+
 * モデルベース：環境の情報（遷移確率T、報酬関数R）を全て知っているという問題設定  
 * モデルフリー：遷移関数と報酬関数が分からない前提の問題設定  
 
@@ -123,11 +119,9 @@ alt="V^\pi(s_t) = \sum_a \pi(s_t, a_t)\sum_{s_{t+1}}P_{s_{t}s_{t+1}}^{a_{t}}(R(s
 状態価値を計算し、値が最も高い状態に遷移するように行動する。（要は必ず価値が高い方へ行動する）  
 学習では価値関数のみが更新される。  
 状態sのとき、価値ベースでの行動aは下記式で表される。  
-<p align="center">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cargmax_%7Ba%7D+%5Csum_%7Bs_%7Bt%2B1%7D%7DP_%7Bs_%7Bt%7Ds_%7Bt%2B1%7D%7D%5E%7Ba%7D%28R%28s_%7Bt%7D%2C+s_%7Bt%2B1%7D%29%2B%5Cgamma+V%28s_%7Bt%2B1%7D%29%29" 
 alt="\argmax_{a} \sum_{s_{t+1}}P_{s_{t}s_{t+1}}^{a}(R(s_{t}, s_{t+1})+\gamma V(s_{t+1}))">
-</p>
 
 2. 方策ベース  
 何かしらの確率モデルで定義された方策πに従って行動する。  

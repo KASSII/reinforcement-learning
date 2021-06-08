@@ -34,9 +34,7 @@
 環境：Mario  
 アルゴリズム：DDQN  
 学習エピソード：40000回（GPU環境で約34.5h学習）  
-<p align="center">
 <img src="../docs/DQN/MarioResult.gif">
-</p>  
 
 ---
 # DQNの概要  
@@ -46,19 +44,12 @@
 <u>通常のQ学習</u>  
 * 表形式でQ関数を表現  
 * 状態空間が大きくなったとき（状態空間が連続値など）、メモリが足りなくなる  
-
-|     | s_1         | s_2         | s_3         | 
-| :-: | :---------: | :---------: | :---------: | 
-| a_1 | Q(s_1, a_1) | Q(s_2, a_1) | Q(s_3, a_1) | 
-| a_2 | Q(s_1, a_2) | Q(s_2, a_2) | Q(s_3, a_2) | 
-| a_3 | Q(s_1, a_3) | Q(s_2, a_3) | Q(s_3, a_3) |  
+<img src="../docs/DQN/q_matrix.jpg">
 　  
 
 <u>DQN</u>  
 * 状態を入力、各行動に対応する行動価値を出力するネットワークでQ関数を表現  
-<p align="center">
-<img src="../docs/DQN/DQN_network.jpg" width=600>
-</p>
+<img src="../docs/DQN/DQN_network.jpg">
 
 ## DQNの損失関数  
 * TD誤差を損失関数として設定する  
@@ -66,10 +57,7 @@
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+r%2B%5Cgamma+Q%28s%27%2C+a%27%29+-+Q%28s%2Ca%29%0A" 
 alt="r+\gamma Q(s', a') - Q(s,a)
 ">  
-
-<p align="center">
-<img src="../docs/DQN/DQN_loss.jpg" width=600>
-</p>  
+<img src="../docs/DQN/DQN_loss.jpg">
 
 ## DQNの工夫  
 * 学習を安定させるため、DQNでは4つの工夫をしている  
@@ -77,18 +65,13 @@ alt="r+\gamma Q(s', a') - Q(s,a)
 1. Experience Replay  
     * エージェントの行動履歴をメモリにプールしてからランダムサンプリングして学習する  
     * 各ステップごとに学習すると、時間的に相関が高いデータを連続して学習することになるので、パラメータの更新が安定しない  
-<p align="center">
-<img src="../docs/DQN/ExperienceReplay.jpg" width=600>
-</p>  
+<img src="../docs/DQN/ExperienceReplay.jpg">
 
 2. Fixed Target Q-Ntetwork  
     * 現在の価値を計算するネットワークと遷移先の価値を計算するネットワークを別々にする（学習するたびに教師データ（更新後の価値）が変わると学習が安定しない）  
     * 現在の価値を計算するネットワークを**メインネットワーク**、遷移先の価値を計算するネットワークを**ターゲットネットワーク**という  
     * 学習時はメインネットワークのみ更新し、一定時刻ごとにメインネットワークをコピーしてターゲットネットワークに上書きする  
-<p align="center">
-<img src="../docs/DQN/FixedTargetQ-Network.jpg" width=800>
-</p>  
-
+<img src="../docs/DQN/FixedTargetQ-Network.jpg">
 
 3. 報酬のクリッピング  
     * 各ステップにおける報酬を-1、0、1のどれかに設定する  
@@ -98,9 +81,7 @@ alt="r+\gamma Q(s', a') - Q(s,a)
 4. Huber関数の使用  
     * 損失関数にHuber関数を採用する  
       → 誤差が大きいときに二条誤差を使うと、出力が大きくなりすぎて学習が安定しなくなる  
-<p align="center">
 <img src="../docs/DQN/Huber.jpg">
-</p>  
 
 ---
 # 実装メモ  
@@ -113,6 +94,6 @@ alt="r+\gamma Q(s', a') - Q(s,a)
   2. リサイズ  
   3. 正規化  
   4. SkipFrame  
-     → 1度のstepで複数フレーム進める（行動は同じものを使用、報酬は蓄積された値とする）
+     → 1度のstepで複数フレーム進める（行動は同じものを使用、報酬は蓄積された値とする）  
   5. FrameStack  
      → 連続した複数フレームをまとめて入力とする（どのような動きをしているのかエージェントが識別できる）

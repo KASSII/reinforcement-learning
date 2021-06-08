@@ -21,24 +21,18 @@
 * 更新の際の行動選択と実際の行動選択はそれぞれ独立に決定する**方策オフ型**の手法  
 
 更新式は下記の通り。  
-<p align="center">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%28s%2Ca%29+%5CLeftarrow+Q%28s%2Ca%29+%2B+%5Calpha+%28r%27+%2B+%5Cgamma++%5Cunderset%7Ba%27%7D%7Bmax%7D+Q%28s%27%2C+a%27%29+-+Q%28s%2C+a%29%29" 
 alt="Q(s,a) \Leftarrow Q(s,a) + \alpha (r' + \gamma  \underset{a'}{max} Q(s', a') - Q(s, a))">
-</p>
 
 ## Q-learningの処理イメージ  
 <u>1step目</u>  
 次の行動a'は最も（見積もりの）行動価値が高い行動を選択する  
-<p align="center">
 <img src="../../docs/TD/Q-learning/Q-learning1.jpg">
-</p>
 
 <u>2step目</u>  
 行動a'は1step目で選択した行動とは独立にε-greedy法などで決定する（ **方策オフ型** ）  
-<p align="center">
 <img src="../../docs/TD/Q-learning/Q-learning2.jpg">
-</p>
 
 ## SarsaとQ-learningの違い  
 * Sarsa  

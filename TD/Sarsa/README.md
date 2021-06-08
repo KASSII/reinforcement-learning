@@ -21,21 +21,15 @@
 * 更新の際の行動選択と実際の行動選択で同じ行動を取る**方策オン型**の手法  
 
 更新式は下記の通り。  
-<p align="center">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%28s%2Ca%29+%5CLeftarrow+Q%28s%2Ca%29+%2B+%5Calpha+%28r%27+%2B+%5Cgamma+Q%28s%27%2C+a%27%29+-+Q%28s%2C+a%29%29" 
 alt="Q(s,a) \Leftarrow Q(s,a) + \alpha (r' + \gamma Q(s', a') - Q(s, a))">
-</p>
 
 ## Sarsaの処理イメージ  
 <u>1step目</u>  
 次の行動a'はε-greedy法などで選択する。  
-<p align="center">
 <img src="../../docs/TD/Sarsa/Sarsa1.jpg">
-</p>
 
 <u>2step目</u>  
 行動a'は1step目で選択した行動にする（ **方策オン型** ）  
-<p align="center">
 <img src="../../docs/TD/Sarsa/Sarsa2.jpg">
-</p>

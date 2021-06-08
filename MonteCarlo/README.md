@@ -19,8 +19,8 @@
 
 ## モンテカルロ法の処理イメージ  
 例）状態s_Aの状態価値をモンテカルロ法で推定する  
-<u>1回目の試行</u>
-<p align="center">
+<b><u>1回目の試行</u></b>
+<p align="left">
 <img src="../docs/MonteCarlo/MonteCarlo_image1.jpg">
 </p>
 
@@ -42,8 +42,8 @@ alt="V_{gain}(s_A) = r_1 + \gamma r_2">
 alt="V_{1}(s_A) = (1-\alpha)V_{estimate}(s_A) + \alpha V_{gain}(s_A)">
 
 
-<u>2回目の試行</u>
-<p align="center">
+<b><u>2回目の試行</u></b>
+<p align="left">
 <img src="../docs/MonteCarlo/MonteCarlo_image2.jpg">
 </p>
 
@@ -66,9 +66,9 @@ alt="V_{2}(s_A) = (1-\alpha)V_{estimate}(s_A) + \alpha V_{gain}(s_A)">
 ...　　
 
 
-<u>N回目の試行</u>  
+<b><u>N回目の試行</u></b>  
 十分な回数を繰り返すことで確率が収束する  
-<p align="center">
+<p align="left">
 <img src="../docs/MonteCarlo/MonteCarlo_image3.jpg">
 </p>
 
