@@ -51,13 +51,17 @@ alt="Q(s, a) = V(s) + A(s, a)">
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%5E%7B%5Cpi%7D%28s%2Ca%29+%3D+%5Cmathbb%7BE%7D%5BR_%7Bt%7D+%5Cmid+s_%7Bt%7D%3Ds%2C+a_%7Bt%7D%3Da%2C+%5Cpi%5D" 
 alt="Q^{\pi}(s,a) = \mathbb{E}[R_{t} \mid s_{t}=s, a_{t}=a, \pi]">  
+
 （行動価値は状態s、行動a、方策πの時の報酬和R_tの期待値）  
+
 <br>
 
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+V%5E%7B%5Cpi%7D%28s%29+%3D+%5Cmathbb%7BE%7D_%7Ba%5C%7E%5Cpi+%28s%29%7D+%5BQ%5E%7B%5Cpi%7D%28s%2Ca%29%5D" 
 alt="V^{\pi}(s) = \mathbb{E}_{a\~\pi (s)} [Q^{\pi}(s,a)]">  
+
 （状態価値は全てのaに対するQ(s,a)の期待値）  
+
 <br>
 
 <img src=
@@ -69,7 +73,7 @@ alt="\pi(s)=\underset{a'}{argmax}Q(s,a')">
 alt="V(s)=Q(s, a') ">
 
 <img src=
-"https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%28s%2C+a%29+%3D+V%28s%29+%2B+A%28s%2C+a%29" 
+"https://render.githubusercontent.com/render/math?math=%5Cdisplaystyle+Q%28s%2C+a%29+%3D+V%28s%29+%2B+A%28s%2C+a%29" 
 alt="Q(s, a) = V(s) + A(s, a)">
 なので、
 <img src=
@@ -78,11 +82,13 @@ alt="A(s, a') = 0">
 が成り立つ。  
 
 上記のアドバンテージの条件を制約に加えると、行動価値は下記の式で計算できる  
+
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%28s%2Ca%29+%3D+V%28s%29%2B%28A%28s%2Ca%29-%5Cunderset%7Ba%27%5Cin+%7CA%7C%7D%7Bmax%7DA%28s%2C+a%27%29%29" 
 alt="Q(s,a) = V(s)+(A(s,a)-\underset{a'\in |A|}{max}A(s, a'))">
 
 定義とは少し異なるが、より安定する下記式を使う  
+
 <img src=
 "https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q%28s%2Ca%29+%3D+V%28s%29%2B%28A%28s%2Ca%29-%5Cfrac%7B1%7D%7B%7CA%7C%7D%5Csum_%7Ba%27%7DA%28s%2Ca%27%29%29" 
 alt="Q(s,a) = V(s)+(A(s,a)-\frac{1}{|A|}\sum_{a'}A(s,a'))">  
